@@ -1,0 +1,12 @@
+{
+  "name": "react_demo_project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "babel-preset-env": "1.5.2",
+    "babel-preset-react": "6.24.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
