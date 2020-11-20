@@ -1,101 +1,140 @@
-//  Example 1
-// Normal Function
-// function getlocation(location) {
-//   if (location) {
-//     return <p>Location: {location}</p>;
-//   } else {
-//     return "No location"
-//   }
-// }
-
-// Arrow Function
-const getlocation = (location) => {
-  if (location) {
-    return <p>Location: {location}</p>;
-  } else {
-    return "No location"
+class DemoApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.removeAll = this.removeAll.bind(this);
+    this.optionsArray = this.optionsArray.bind(this);
+    this.addOptions = this.addOptions.bind(this);
+    this.state = {
+      title : "Demo App",
+      sub_title : "Select the options",
+      options :[]
+    }
   }
-}
-
-//  Exploring JSX and Arrov function
-const user = {
-  author_name: "John",
-  book_name: "The journey",
-  location: "Chennai",
-  publish_year: "2000",
-  cities: ["TN", "Kerala", "Andhra"],
-  getCity: function () {
-    this.cities.forEach((cities) => {
-      console.log(this.author_name + " lives in " + cities)
+  removeAll(){
+    this.setState({
+      options:[]
     })
+   }
+  optionsArray(){
+    const rnum = Math.floor(Math.random() * this.state.options.length);
+    const option = this.state.options[rnum]
+    alert(option)
+    
   }
-};
-user.getCity();
-
-// JSX Expression
-const book_template = (
-  <div>
-    {user.author_name ? <h1>Author Name: {user.author_name} </h1> : "No name"}{/* terinary operator*/}
-    <p>Book Name :{user.book_name}</p>
-    {(user.publish_year && user.publish_year >= 2000) && <p>Publish Year: {user.publish_year}</p>}
-    {getlocation(user.location)}   {/* if statement*/}
-  </div>
-);
-// Example 1
-const demo_values = {
-  title: "Demo App",
-  sub_title: "Select the options in the list",
-  options: []
+  addOptions(option){
+console.log("op--",option)
+if(!option){
+  return 'Enter a valid value'
+}else if(this.state.options.indexOf(option) > -1){
+  return 'This option already exist'
 }
-const onFormSubmit = (e) => {
-  e.preventDefault();
-  const option = e.target.elements.option.value;
-  if (option) {
-    demo_values.options.push(option);
-    e.target.elements.option.value = '';
-    RenderDemoApp();
+this.setState({
+  options:this.state.options.concat(option)
+})
+;
   }
-  console.log("form submitted", option)
-}
-const removeAll = () => {
-  demo_values.options = [];
-  RenderDemoApp();
-}
-const selectOption = () => {
-  const rnum = Math.floor(Math.random() * demo_values.options.length);
-  const option = demo_values.options[rnum]
-  alert(option)
+  render() {
+
+    return (
+      <div>
+        <Header title={this.state.title} sub_title={this.state.sub_title} />
+        <Action hasOptions={this.state.options.length > 0} optionsArray={this.optionsArray}/>
+        <Options options={this.state.options} removeAll={this.removeAll}/>
+        <AddOptions options={this.state.options} addOptions={this.addOptions}/>
+      </div>
+    )
+  }
+
 }
 
-const appRoot = document.getElementById('app');
 
-const RenderDemoApp = () => {
-  const demo_app = (
-    <div>
-      <h1>{demo_values.title}</h1>
-      {demo_values.sub_title && <p>{demo_values.sub_title}</p>}
-      <p>{demo_values.options.length > 0 ? "Here are the options" : " No options"}</p>
-      <button disabled={demo_values.options.length === 0} onClick={(selectOption)}>Should I do ?</button>
-      <button onClick={(removeAll)}>Remove All</button><br />
-      {demo_values.options.length}
-      <ol>
+class Header extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <h2>{this.props.sub_title}</h2>
+      </div>
+    );
+  }
+}
+class Action extends React.Component {
+  constructor(props){
+    super(props);
+
+  }
+  render() {
+    return (
+      <button disabled={!this.props.hasOptions}  onClick={this.props.optionsArray}>Should I do ?</button>
+    )
+  }
+}
+class Options extends React.Component {
+  constructor(props) {
+    super(props);
+    
+  }
+ 
+  render() {
+    console.log("props oprions", this.props.options)
+    return (
+      <div>
+        <button onClick={this.props.removeAll}>Remove All</button>
         {
-          demo_values.options.map((option) => {
-            return <li key={option}>{option}</li>
-          })
+          this.props.options.map((options) =>
+            <Option key={options} optionText={options} />
+          )
         }
-      </ol>
-
-      {/* <ul>
-        <li>One</li>
-        <li>Three</li>
-      </ul> */}
-      <form onSubmit={onFormSubmit}>
-        <input type="text" name="option" />
-        <button>Add Options</button>
-      </form>
-    </div>
-  );
-  ReactDOM.render(demo_app, appRoot)
+        <p>{this.props.options.length}</p>
+      </div>
+    )
+  }
 }
-RenderDemoApp();
+class Option extends React.Component {
+  constructor(props){
+    super(props);
+  }
+  render() {
+    return (
+      <div>
+        <ol>
+          <li>{this.props.optionText}  <button onClick={this.removeEach}>Remove</button></li>
+        </ol>
+      </div>
+    )
+  }
+}
+class AddOptions extends React.Component {
+  constructor(props){
+    super(props);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.state = {
+    error :''
+    }
+  }
+  onFormSubmit(e) {
+    e.preventDefault();
+    const option = e.target.elements.option.value;
+     const error = this.props.addOptions(option)
+     this.setState(() => {
+      return {error}
+     })
+    //  if(option){
+    //    this.props.addOptions(option);
+    //  }
+    
+  }
+  render() {
+    console.log("pppp",this.props.options)
+    return (
+      <div>
+        <form onSubmit={this.onFormSubmit}>
+          <input type="text" name="option" />
+          <button>Add Options</button>
+          {this.state.error && <p> {this.state.error} </p>}
+        </form>
+      </div>
+    )
+  }
+}
+ReactDOM.render(<DemoApp />, document.getElementById('app'))
