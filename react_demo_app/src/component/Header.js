@@ -6,7 +6,7 @@ import React from 'react';
 class Header extends React.Component {
   render() {
     return (
-      <div>
+      <div className="header">
         <h1>{this.props.title}</h1>
         <h2>{this.props.sub_title}</h2>
       </div>
